@@ -16,16 +16,14 @@ def parse_args(args):
             comments_list = args.comments.split(',')
             comments_list = [comment.strip() for comment in comments_list]
         except Exception:
-            print(
-                "Incorrect formatting of comments. Please provide a comma seperated string")
+            print("Incorrect formatting of comments. Please provide a comma seperated string")
             exit(1)
     if args.hashtags:
         try:
             hashtags = args.hashtags.split(',')
             hashtags = [tag.strip() for tag in hashtags]
         except Exception:
-            print(
-                "Incorrect formatting of comments. Please provide a comma seperated string")
+            print("Incorrect formatting of comments. Please provide a comma seperated string")
             exit(1)
     hashtag_args = {'hashtags': hashtags, 'comments': comments_list}
     return hashtag_args

@@ -19,7 +19,7 @@ Currently there are two options available for the instaBot.py
 
 #### Example
 ```
-python3 instaBot.py --hashtag-automation --comments "Great post, Cool post guys, This is awesome. I would totally recommend you to others, Fantastic post! Keep up the good work, Incredible work we absolutely love it" --hashtags "webdeveloper"
+python3 instaBotExecutor.py --hashtag-automation --comments "Great post, Cool post guys, This is awesome. I would totally recommend you to others, Fantastic post! Keep up the good work, Incredible work we absolutely love it" --hashtags "webdeveloper"
 ```
 
 #### Note
