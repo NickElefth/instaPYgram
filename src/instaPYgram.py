@@ -6,6 +6,9 @@ from selenium.common.exceptions import NoSuchElementException
 import re
 import creds
 
+MAX_NUMBER_OF_FOLLOWERS = 1500
+
+
 class HomePage:
     def __init__(self, browser):
         self.browser = browser
@@ -61,8 +64,9 @@ class HashTagLikes():
         pic_hrefs_pattern = re.compile("^https:\/\/www\.instagram\.com\/p\/.+\/")  # Only select picture links
         hrefs = self.browser.find_elements_by_tag_name('a')
         pic_hrefs = [elem.get_attribute('href') for elem in hrefs if pic_hrefs_pattern.match(elem.get_attribute('href'))]
-        print ("{0} photos found: {1}".format(hashtag, len(pic_hrefs)))
-        for pic_href in pic_hrefs:
+        print("{0} photos found: {1}".format(hashtag, len(pic_hrefs)))
+        for iteration, pic_href in enumerate(pic_hrefs):
+            print("Currently on iteration {0}/{1}".format(iteration, len(pic_hrefs)))
             #  Multiple hashtags might lead to revisiting the same pic
             if pic_href in self.pics_already_liked:
                 continue
@@ -118,8 +122,8 @@ class HashTagLikes():
     def check_number_followers(self):
         num_of_followers = self.browser.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span")
         num_of_followers = num_of_followers.get_attribute('title')
-        num_of_followers = int(num_of_followers.replace(',','')) 
-        if num_of_followers < 1500:
+        num_of_followers = int(num_of_followers.replace(',', ''))
+        if num_of_followers < MAX_NUMBER_OF_FOLLOWERS:
             return True
         return False
         
@@ -153,18 +157,22 @@ class InstaBot():
     def get_my_followers_list(self):
         self.get_to_my_profile()
         return self._get_followers_list()
-    
-    def unfollow_unfollowers(self):
+
+    def unfollow_unfollowers(self, unfollow_limit=None):
         not_followers = self.get_unfollowers()
-        for href in not_followers.values():
+        if not unfollow_limit:
+            unfollow_limit = len(not_followers)
+        for user_number, href in enumerate(not_followers.values()):
+            if user_number == unfollow_limit:
+                break # Exit loop if we reached the specified number of unfollowers
             try:
                 self.browser.get(href)
-                sleep(2)
+                sleep(15)
                 # Unfollow button
                 self.browser.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/div[1]/div[2]/div/span/span[1]/button').click()
-                sleep(2)
+                sleep(15)
                 self.browser.find_element_by_xpath("/html/body/div[4]/div/div/div/div[3]/button[1]").click()
-                print("unfollowed: {0}".format(href))
+                print("unfollowed: {0}\n Unfollowing 1 person every 30 seconds".format(href))
             except Exception as ex:
                 print("## Couldnt unfollow: {0} \n Exception: {1}".format(href, ex))
         sleep(5)

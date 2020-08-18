@@ -8,6 +8,12 @@ import argparse
 
 def parse_args(args):
     hashtags, comments_list = [], []
+    if args.number_to_unfollow:
+        try:
+            int(args.number_to_unfollow)
+        except ValueError:
+            print("Invalid value for'--number-to-unfollow'.Value should be an integer")
+            exit(1)
     if (not args.comments or not args.hashtags) and args.hashtag_automation:
         print("For hashtag automation you have to provide a list of hashtags and a list of comments")
         exit(1)
@@ -26,15 +32,23 @@ def parse_args(args):
             print("Incorrect formatting of comments. Please provide a comma seperated string")
             exit(1)
     hashtag_args = {'hashtags': hashtags, 'comments': comments_list}
-    return hashtag_args        
-  
-    
+    return hashtag_args
+
+
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--hashtags', action='store', help='Comma seperated string of hashtags')
-    parser.add_argument('--comments',  action='store', help='Comma seperated string of comments')
-    parser.add_argument('--hashtag-automation', action='store_true', help='Boolean value that starts automated liking, commenting and following pictures using hashtags')
-    parser.add_argument('--find-unfollowers', action='store_true', help="Boolean value that outputs a list of unfollowers")
+    parser.add_argument('--hashtags', action='store',
+                        help='Comma seperated string of hashtags')
+    parser.add_argument('--comments',  action='store',
+                        help='Comma seperated string of comments')
+    parser.add_argument('--hashtag-automation', action='store_true',
+                        help='Boolean value that starts automated liking, commenting and following pictures using hashtags')
+    parser.add_argument('--find-unfollowers', action='store_true',
+                        help="Boolean value that outputs a list of unfollowers")
+    parser.add_argument('--unfollow-unfollowers', action='store_true',
+                        help="Searches and unfollows unfollowers")
+    parser.add_argument('--number-to-unfollow', action="store",
+                        help="Number of people to unfollow if not specified will try to unfollow every unfollower")
     args = parser.parse_args()
     return args
 
@@ -45,8 +59,11 @@ def main():
     insta_bot = InstaBot(creds.getUsername(), creds.getPassword())
     if args.find_unfollowers:
         insta_bot.get_unfollowers()
+    if args.unfollow_unfollowers:
+        insta_bot.unfollow_unfollowers(args.number_to_unfollow)
     if args.hashtag_automation:
-        insta_bot.hashtag_automation(hashtag_args['hashtags'], hashtag_args['comments'])
+        insta_bot.hashtag_automation(
+            hashtag_args['hashtags'], hashtag_args['comments'])
     sleep(10)
     print("Instabot has finished.")
     insta_bot.end_session()

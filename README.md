@@ -10,10 +10,12 @@
 
 ## Quick Start
 
-Currently there are two options available for the instaBot.py 
+Currently there are two options available for the instaBotExecutor.py
 
-1) Execute the instaBot.py with the --find-unfollowers option to retrieve a list of followers
-2) Execute the instaBot.py with the --hashtag-automation option and pass a comma seperated string of comments and hashtags to run the Bot
+1) Execute the instaBotExecutor.py with the --find-unfollowers option to retrieve a list of followers
+2) Execute the instaBotExecutor.py with the --hashtag-automation option and pass a comma seperated string of comments and hashtags to run the Bot
+3) Execute the instaBotExecutor.py with --unfollow-unfollowers option to find and unfollow unfollowers you can specify the number of unfollowers you would like to unfollow at the current execution using --number-to-unfollow arg
+4) Change creds.py with your IG username and password
 
 #### Example
 '''
