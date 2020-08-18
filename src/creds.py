@@ -1,6 +1,6 @@
 
 def getUsername():
-    return "limitless.code"
+    return "REPLACE_WITH_YOUR_USERNAME"
 
 def getPassword():
-    return "#Limitless125x"    
+    return "REPLACE_WITH_YOUR_PASSWORD"    

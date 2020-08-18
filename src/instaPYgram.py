@@ -6,11 +6,8 @@ from selenium.common.exceptions import NoSuchElementException
 import re
 import creds
 
-<<<<<<< HEAD
 MAX_NUMBER_OF_FOLLOWERS = 1500
 
-=======
->>>>>>> 4d3ac16f65234f72910a0ce5e8481a8415ab529c
 
 class HomePage:
     def __init__(self, browser):
@@ -72,12 +69,8 @@ class HashTagLikes():
         hrefs = self.browser.find_elements_by_tag_name('a')
         pic_hrefs = [elem.get_attribute('href') for elem in hrefs if pic_hrefs_pattern.match(elem.get_attribute('href'))]
         print("{0} photos found: {1}".format(hashtag, len(pic_hrefs)))
-<<<<<<< HEAD
         for iteration, pic_href in enumerate(pic_hrefs):
             print("Currently on iteration {0}/{1}".format(iteration, len(pic_hrefs)))
-=======
-        for pic_href in pic_hrefs:
->>>>>>> 4d3ac16f65234f72910a0ce5e8481a8415ab529c
             #  Multiple hashtags might lead to revisiting the same pic
             if pic_href in self.pics_already_liked:
                 continue
@@ -134,11 +127,7 @@ class HashTagLikes():
         num_of_followers = self.browser.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span")
         num_of_followers = num_of_followers.get_attribute('title')
         num_of_followers = int(num_of_followers.replace(',', ''))
-<<<<<<< HEAD
         if num_of_followers < MAX_NUMBER_OF_FOLLOWERS:
-=======
-        if num_of_followers < 1500:
->>>>>>> 4d3ac16f65234f72910a0ce5e8481a8415ab529c
             return True
         return False
 
@@ -174,11 +163,7 @@ class InstaBot():
         self.get_to_my_profile()
         return self._get_followers_list()
 
-<<<<<<< HEAD
     def unfollow_unfollowers(self, unfollow_limit=None):
-=======
-    def unfollow_unfollowers(self):
->>>>>>> 4d3ac16f65234f72910a0ce5e8481a8415ab529c
         not_followers = self.get_unfollowers()
         if not unfollow_limit:
             unfollow_limit = len(not_followers)
