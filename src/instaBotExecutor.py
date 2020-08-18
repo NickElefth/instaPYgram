@@ -26,15 +26,19 @@ def parse_args(args):
             print("Incorrect formatting of comments. Please provide a comma seperated string")
             exit(1)
     hashtag_args = {'hashtags': hashtags, 'comments': comments_list}
-    return hashtag_args        
-  
-    
+    return hashtag_args
+
+
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--hashtags', action='store', help='Comma seperated string of hashtags')
-    parser.add_argument('--comments',  action='store', help='Comma seperated string of comments')
-    parser.add_argument('--hashtag-automation', action='store_true', help='Boolean value that starts automated liking, commenting and following pictures using hashtags')
-    parser.add_argument('--find-unfollowers', action='store_true', help="Boolean value that outputs a list of unfollowers")
+    parser.add_argument('--hashtags', action='store',
+                        help='Comma seperated string of hashtags')
+    parser.add_argument('--comments',  action='store',
+                        help='Comma seperated string of comments')
+    parser.add_argument('--hashtag-automation', action='store_true',
+                        help='Boolean value that starts automated liking, commenting and following pictures using hashtags')
+    parser.add_argument('--find-unfollowers', action='store_true',
+                        help="Boolean value that outputs a list of unfollowers")
     args = parser.parse_args()
     return args
 
@@ -46,7 +50,8 @@ def main():
     if args.find_unfollowers:
         insta_bot.get_unfollowers()
     if args.hashtag_automation:
-        insta_bot.hashtag_automation(hashtag_args['hashtags'], hashtag_args['comments'])
+        insta_bot.hashtag_automation(
+            hashtag_args['hashtags'], hashtag_args['comments'])
     sleep(10)
     print("Instabot has finished.")
     insta_bot.end_session()
