@@ -49,6 +49,8 @@ def get_args():
                         help="Searches and unfollows unfollowers")
     parser.add_argument('--number-to-unfollow', action="store",
                         help="Number of people to unfollow if not specified will try to unfollow every unfollower")
+    # parser.add_argument('--like-following-feed', action="store_true",
+    #                     help="Like 50 images from following in your feed")
     args = parser.parse_args()
     return args
 
@@ -64,6 +66,9 @@ def main():
     if args.hashtag_automation:
         insta_bot.hashtag_automation(
             hashtag_args['hashtags'], hashtag_args['comments'])
+    # TODO
+    # if args.like_following_feed:
+    #     insta_bot.like_following_feed()
     sleep(10)
     print("Instabot has finished.")
     insta_bot.end_session()
