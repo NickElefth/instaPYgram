@@ -66,7 +66,7 @@ class HashTagLikes():
                 )
             sleep(2)
         # searching for picture links
-        pic_hrefs_pattern = re.compile("^https:\/\/www\.instagram\.com\/p\/.+\/")  # Only select picture links
+        pic_hrefs_pattern = re.compile("^https:\/\/www\.instagram\.com\/p\/.+\/")  # Only select picture links pylint: disable=anomalous-backslash-in-string
         hrefs = self.browser.find_elements_by_tag_name('a')
         pic_hrefs = [elem.get_attribute('href') for elem in hrefs if pic_hrefs_pattern.match(elem.get_attribute('href'))]
         print("{0} photos found: {1}".format(hashtag, len(pic_hrefs)))
@@ -153,6 +153,7 @@ class InstaBot():
         for hashtag in hashtags:
             print(hashtag)
             self.hash_tag_settings.hashtag_farming(hashtag, comments_list)
+        log_instagram_stats(self.hash_tag_settings.new_likes, self.hash_tag_settings.new_comments, len(self.hash_tag_settings.new_followed), hashtags, comments_list)  # pylint: disable=too-many-arguments
         print("Hashtag automated session has ended:\n New Likes: {0}\n New Comments: {1},\n New Following: {2},\n List of new Following: \n{3}".format(self.hash_tag_settings.new_likes,
                                                                                                                                                        self.hash_tag_settings.new_comments,
                                                                                                                                                        len(self.hash_tag_settings.new_followed),
@@ -254,3 +255,4 @@ class InstaBot():
 
     def end_session(self):
         self.browser.close()
+

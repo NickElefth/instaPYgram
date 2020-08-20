@@ -1,3 +1,4 @@
 __pycache__
 src/geckodriver.log
 src/instagramLogger.json
+src/instagramStats.json
