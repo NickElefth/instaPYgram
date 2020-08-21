@@ -1,5 +1,5 @@
 """
-Data logger helper functions for 24Hours could so we avoid interruction with the same pic_href
+Data logger helper functions for 24Hours so we avoid interaction with the same pic_href
 """
 import json
 import itertools
@@ -8,15 +8,31 @@ import os
 
 TIMESTAMP_DAY = 86400
 
+"""
+Get current timestamp in full, on execution
+"""
+
 
 def get_timestamp():
     timestamp = datetime.timestamp(datetime.now())
     return timestamp
 
+
+"""
+Get the current date & time and split them
+"""
+
+
 def get_datetime():
-    date_time = str(datetime.now()).split('.')[0]  # remove decimals from seconds
+    date_time = str(datetime.now()).split(
+        '.')[0]  # remove decimals from seconds
     date, time = date_time.split(' ')
     return date, time
+
+
+"""
+Load a json file and store it in a data variable object
+"""
 
 
 def load_json_file(file_name):
@@ -31,19 +47,20 @@ def load_json_file(file_name):
 
 def gather_logged_hrefs():
     logged_data = load_json_file("instagramLogger.json")
-    instagram_hrefs = [[href for href in hrefs] for hrefs in logged_data.values()]
+    instagram_hrefs = [[href for href in hrefs]
+                       for hrefs in logged_data.values()]
     instagram_hrefs = list(itertools.chain.from_iterable(instagram_hrefs))
     return instagram_hrefs
 
 
 def log_instagram_hrefs(list_of_pictures):
     """
-    Stores links which we have already interacted withing the last 24h
+    Stores links which we have already interacted within the last 24h
     """
     data = load_json_file("instagramLogger.json")
     data = clean_up_old_data(data)
-    with open("instagramLogger.json", "w+") as file:  
-        data.update({get_timestamp() : list_of_pictures})
+    with open("instagramLogger.json", "w+") as file:
+        data.update({get_timestamp(): list_of_pictures})
         json.dump(data, file)
 
 
@@ -55,7 +72,7 @@ def log_instagram_stats(likes, comments, new_following, hashtags, comments_list,
     if not data:
         data = []
     date, time = get_datetime()
-    with open("instagramStats.json", "w+") as file:  
+    with open("instagramStats.json", "w+") as file:
         data.append(
             {
                 "Date": date,
