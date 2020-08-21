@@ -47,7 +47,7 @@ def log_instagram_hrefs(list_of_pictures):
         json.dump(data, file)
 
 
-def log_instagram_stats(likes, comments, new_following, hashtags, comments_list):
+def log_instagram_stats(likes, comments, new_following, hashtags, comments_list, current_followers, current_following):
     """
     Logs statistics of each run
     """
@@ -65,6 +65,8 @@ def log_instagram_stats(likes, comments, new_following, hashtags, comments_list)
                 "New Following": new_following,
                 "HashTags Used": hashtags,
                 "Comments Used": comments_list,
+                "Current Followers": current_followers,
+                "Current Following": current_following,
             }
         )
         json.dump(data, file)

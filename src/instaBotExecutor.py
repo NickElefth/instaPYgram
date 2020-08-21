@@ -4,6 +4,7 @@ from selenium import webdriver
 import creds
 from instaPYgram import *
 import argparse
+from graphData import produce_instapygram_report
 
 
 def parse_args(args):
@@ -14,7 +15,7 @@ def parse_args(args):
         except ValueError:
             print("Invalid value for'--number-to-unfollow'.Value should be an integer")
             exit(1)
-    if (not args.comments or not args.hashtags) and args.hashtag_automation:
+    if (not args.comments or not args.hashtags) and args.hashtag_automation and not args.only_likes:
         print("For hashtag automation you have to provide a list of hashtags and a list of comments")
         exit(1)
     if args.comments:
@@ -43,12 +44,16 @@ def get_args():
                         help='Comma seperated string of comments')
     parser.add_argument('--hashtag-automation', action='store_true',
                         help='Boolean value that starts automated liking, commenting and following pictures using hashtags')
+    parser.add_argument('--only-likes', action='store_true',
+                        help='Boolean value that is passed with --hashtag-automation to only like pictures')
     parser.add_argument('--find-unfollowers', action='store_true',
                         help="Boolean value that outputs a list of unfollowers")
     parser.add_argument('--unfollow-unfollowers', action='store_true',
                         help="Searches and unfollows unfollowers")
     parser.add_argument('--number-to-unfollow', action="store",
                         help="Number of people to unfollow if not specified will try to unfollow every unfollower")
+    parser.add_argument('--produce-report', action="store_true",
+                        help="Displays InstaPYgram Report, Must run the InstaBot at least once to collect data")
     # parser.add_argument('--like-following-feed', action="store_true",
     #                     help="Like 50 images from following in your feed")
     args = parser.parse_args()
@@ -57,8 +62,11 @@ def get_args():
 
 def main():
     args = get_args()
+    bot_initialized = False
     hashtag_args = parse_args(args)
-    insta_bot = InstaBot(creds.getUsername(), creds.getPassword())
+    if args.find_unfollowers or args.hashtag_automation or args.unfollow_unfollowers:
+        insta_bot = InstaBot(creds.getUsername(), creds.getPassword(), args.only_likes)
+        bot_initialized = True
     if args.find_unfollowers:
         insta_bot.get_unfollowers()
     if args.unfollow_unfollowers:
@@ -66,12 +74,15 @@ def main():
     if args.hashtag_automation:
         insta_bot.hashtag_automation(
             hashtag_args['hashtags'], hashtag_args['comments'])
+    if args.produce_report:
+        produce_instapygram_report()
+    if bot_initialized:
+        insta_bot.end_session()
+        print("Instabot has finished.")
+
     # TODO
     # if args.like_following_feed:
     #     insta_bot.like_following_feed()
-    sleep(10)
-    print("Instabot has finished.")
-    insta_bot.end_session()
 
 
 try:

@@ -45,13 +45,14 @@ class LoginPage:
 
 
 class HashTagLikes():
-    def __init__(self, username, browser):
+    def __init__(self, username, browser, only_likes):
         self.username = username
         self.browser = browser
         self.new_likes = 0
         self.new_comments = 0
         self.new_followed = []
         self.pics_already_liked = []
+        self.only_likes = only_likes
 
     def hashtag_farming(self, hashtag, comments_list):
         """
@@ -80,13 +81,18 @@ class HashTagLikes():
                 continue  # if we liked/commented/followed pic in the last 24 hours skip it
             self.pics_already_liked.append(pic_href)
             sleep(2)
-            self.browser.get(pic_href)
+            try:
+                self.browser.get(pic_href)
+            except selenium.common.exceptions.TimeoutException as ex:
+                print("Timeout Exception on pic href {0} Error: {1}".format(pic_href, ex))
+                continue
             sleep(3)
             # self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") // Not needed to scroll at this point of time
             try:
                 self._like_photo()
-                self._comment_photo(comments_list)
-                self._follow_user(pic_href)
+                if not self.only_likes:  # Option to only like pictures and ignore comments/follows
+                    self._comment_photo(comments_list)
+                    self._follow_user(pic_href)
             except Exception as ex:
                 print("Exception thrown: {0}".format(ex))
                 sleep(5)
@@ -138,7 +144,7 @@ class HashTagLikes():
 
 
 class InstaBot():
-    def __init__(self, username, password):
+    def __init__(self, username, password, only_likes=False):
         self.browser = webdriver.Firefox()
         self.username = username
         self.session = HomePage(self.browser)
@@ -147,13 +153,25 @@ class InstaBot():
             creds.getUsername(), creds.getPassword())
         sleep(3)
         self.hash_tag_settings = HashTagLikes(username=self.username,
-                                              browser=self.browser)
+                                              browser=self.browser,
+                                              only_likes=only_likes)
 
     def hashtag_automation(self, hashtags, comments_list):
+        current_followers = self.get_my_followers_number()
+        print("followers {}".format(current_followers))
+
+        current_following = self.get_my_following_number()
+        print("following {}".format(current_following))
+
         for hashtag in hashtags:
             print(hashtag)
             self.hash_tag_settings.hashtag_farming(hashtag, comments_list)
-        log_instagram_stats(self.hash_tag_settings.new_likes, self.hash_tag_settings.new_comments, len(self.hash_tag_settings.new_followed), hashtags, comments_list)  # pylint: disable=too-many-arguments
+        log_instagram_stats(self.hash_tag_settings.new_likes,
+                            self.hash_tag_settings.new_comments,
+                            len(self.hash_tag_settings.new_followed),
+                            hashtags, comments_list,
+                            current_followers,
+                            current_following)  # pylint: disable=too-many-arguments
         print("Hashtag automated session has ended:\n New Likes: {0}\n New Comments: {1},\n New Following: {2},\n List of new Following: \n{3}".format(self.hash_tag_settings.new_likes,
                                                                                                                                                        self.hash_tag_settings.new_comments,
                                                                                                                                                        len(self.hash_tag_settings.new_followed),
@@ -163,11 +181,45 @@ class InstaBot():
         self.browser.get('https://www.instagram.com/')
         
     def get_to_my_profile(self):
+        self.get_to_homepage()
+        sleep(3)
         self.browser.find_element_by_xpath("//a[contains(@href, '/{0}')]".format(self.username)).click()
 
     def get_my_followers_list(self):
         self.get_to_my_profile()
         return self._get_followers_list()
+    
+    def get_my_followers_number(self):
+        """
+        Get number of followers
+        """
+        self.get_to_my_profile()
+        sleep(4)
+        num_of_followers = self.browser.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span")
+        return self._cleanup_follow_number(num_of_followers)
+    
+    def get_my_following_number(self):
+        """
+        Get number of following
+        """
+        self.get_to_my_profile()
+        sleep(4)
+        num_of_following = self.browser.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[3]/a/span")
+        return self._cleanup_follow_number(num_of_following)
+
+    def _cleanup_follow_number(self, number_element):
+        """
+        Number of following/followers does not appear in a numerical format
+        This is a helper method to convert the string into a number
+        """
+        numerical_value = number_element.get_attribute('title')
+        if not numerical_value:
+            numerical_value = number_element.get_attribute('innerHTML')
+        try:
+            numerical_value = int(numerical_value.replace(',', ''))
+        except ValueError:
+            pass
+        return numerical_value
 
     def unfollow_unfollowers(self, unfollow_limit=None):
         not_followers = self.get_unfollowers()
