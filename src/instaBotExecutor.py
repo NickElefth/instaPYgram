@@ -4,7 +4,7 @@ from selenium import webdriver
 import creds
 from instaPYgram import *
 import argparse
-from graphData import produce_instapygram_report
+# from graphData import produce_instapygram_report
 
 
 def parse_args(args):

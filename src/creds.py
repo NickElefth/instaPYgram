@@ -1,6 +1,7 @@
 
 def getUsername():
-    return "REPLACE_WITH_YOUR_USERNAME"
+    return "renovinft"
+
 
 def getPassword():
-    return "REPLACE_WITH_YOUR_PASSWORD"    
+    return "RenoviNFT4/06/2021"
